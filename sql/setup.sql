@@ -14,6 +14,25 @@ CREATE TABLE users (
   last_name VARCHAR NOT NULL
 );
 
+CREATE TABLE restaurants (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name VARCHAR NOT NULL,
+  cuisine VARCHAR NOT NULL,
+  cost INT NOT NULL,
+  image VARCHAR NOT NULL,
+  website VARCHAR
+);
+
+CREATE TABLE reviews (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  user_id BIGINT,
+  restaurant_id BIGINT,
+  stars INT,
+  detail VARCHAR,
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (restaurant_id) REFERENCES restaurants(id)
+);
+
 INSERT INTO
   users (email, password_hash, first_name, last_name)
 VALUES
@@ -35,26 +54,6 @@ VALUES
     'Carole',
     'C'
   );
-
-CREATE TABLE restaurants (
-  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  name VARCHAR NOT NULL,
-  cuisine VARCHAR NOT NULL,
-  cost INT NOT NULL,
-  image VARCHAR NOT NULL,
-  website VARCHAR
-);
-
-CREATE TABLE reviews (
-  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  user_id BIGINT,
-  restaurant_id BIGINT,
-  stars INT,
-  detail VARCHAR,
-  FOREIGN KEY (user_id) REFERENCES users(id),
-  FOREIGN KEY (restaurant_id) REFERENCES restaurants(id)
-);
-
 INSERT INTO
   restaurants (name, cuisine, cost, image, website)
 VALUES
