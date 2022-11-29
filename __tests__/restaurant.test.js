@@ -124,4 +124,27 @@ describe('Restaurant routes', () => {
       }
     `);
   });
+
+  it('DELETE /api/v1/reviews/:id admin can delete a post', async () => {
+    const agent = request.agent(app);
+    // making an admin
+    await UserService.create({
+      firstName: 'admin',
+      lastName: 'admin',
+      email: 'admin@admin.com',
+      password: 'password',
+    });
+    //logged in as an admin
+    await agent.post('/api/v1/users/sessions').send({
+      email: 'admin@admin.com',
+      password: 'password',
+    });
+    // deleting review with id = 1
+    const res = await agent.delete('/api/v1/reviews/2');
+    expect(res.status).toBe(204);
+
+    // if 404/not found that means it's deleted
+    const getResp = await request(app).get('/api/v1/reviews/2');
+    expect(getResp.status).toBe(404);
+  });
 });
