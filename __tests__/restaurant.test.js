@@ -125,7 +125,7 @@ describe('Restaurant routes', () => {
     `);
   });
 
-  it('DELETE /api/v1/reviews/:id admin can delete a post', async () => {
+  it('DELETE /api/v1/reviews/:id admin can delete a reviews', async () => {
     const agent = request.agent(app);
     // making an admin
     await UserService.create({
@@ -145,6 +145,31 @@ describe('Restaurant routes', () => {
 
     // if 404/not found that means it's deleted
     const getResp = await request(app).get('/api/v1/reviews/2');
+    expect(getResp.status).toBe(404);
+  });
+
+  it('DELETE /api/v1/reviews/:id users can delete their reviews', async () => {
+    const agent = request.agent(app);
+    await UserService.create({
+      firstName: 'Test',
+      lastName: 'Test',
+      email: 'Test@Test.com',
+      password: 'password',
+    });
+    await agent.post('/api/v1/users/sessions').send({
+      email: 'Test@Test.com',
+      password: 'password',
+    });
+
+    await agent.post('/api/v1/restaurants/1/reviews').send({
+      stars: 1,
+      detail:
+        'you know what, Ive had it with this place, horrible food, terrible staff, and disgusting lighting',
+    });
+    const res = await agent.delete('/api/v1/reviews/4');
+    expect(res.status).toBe(204);
+
+    const getResp = await request(app).get('/api/v1/reviews/1');
     expect(getResp.status).toBe(404);
   });
 });
